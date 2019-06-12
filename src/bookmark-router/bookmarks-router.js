@@ -1,5 +1,6 @@
 const express = require('express');
 const uuid = require('uuid/v4');
+const validator = require('validator');
 const logger = require('../logger');
 const bookmarks = require('../bookmarks');
 const bookmarksRouter = express.Router();
@@ -26,6 +27,24 @@ bookmarksRouter.route('/bookmarks')
         }
         if (!description) {
             logger.error(`Description is required`);
+            return res
+                .status(400)
+                .send('Invalid data');
+        }
+        if (isNaN(parseInt(rating))) {
+            logger.error(`Rating needs to be a number`);
+            return res
+                .status(400)
+                .send('Invalid data');
+        }
+        if (rating < 1 || rating > 5) {
+            logger.error(`Rating should be between 1 and 5`);
+            return res
+                .status(400)
+                .send('Invalid data');
+        }
+        if (!validator.isURL(url)) {
+            logger.error(`The url is not valid`);
             return res
                 .status(400)
                 .send('Invalid data');
